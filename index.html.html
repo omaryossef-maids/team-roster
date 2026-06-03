@@ -262,8 +262,6 @@
     .modal-overlay > .modal { display: flex !important; flex-direction: column !important; position: relative !important; inset: auto !important; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; opacity: 1 !important; visibility: visible !important; transform: none !important; width: 100% !important; height: auto !important; min-height: 0 !important; max-height: 90vh; overflow: auto; }
     .modal-footer-stack { flex-direction: column; align-items: stretch; gap: 0.6rem; }
     .modal-footer-stack .mf-row { display: flex; gap: 0.5rem; justify-content: flex-end; }
-    .demo-link { text-align: center; font-size: 0.78rem; color: var(--primary-color); text-decoration: underline; cursor: pointer; }
-    .demo-link:hover { color: var(--primary-hover); }
     .emp-name-link { color: #3b82f6; text-decoration: none; cursor: pointer; font-weight: 600; }
     .emp-name-link:hover { color: #2563eb; }
     /* History modal */
@@ -356,8 +354,10 @@
                             <span class="banner-title">Your Team's Roster for <span class="mo">June 2026</span> Payroll</span>
                             <div class="banner-note">
                                 <div>Update your team's salaries from this page.</div>
-                                <div><strong>For Emiratis:</strong> changes submitted by <span class="deadline">June 25, 11:59 PM</span> will be applied to <strong>June</strong> salary; changes submitted from <span class="deadline-late">June 26</span> onward will be applied to <strong>July</strong> salary.</div>
-                                <div><strong>For Overseas &amp; Expats:</strong> changes submitted by <span class="deadline">June 26, 11:59 PM</span> will be applied to <strong>June</strong> salary; changes submitted from <span class="deadline-late">June 27</span> onward will be applied to <strong>July</strong> salary.</div>
+                                <div>You can request a change at any time. It will be applied to <strong>June 2026</strong> salary as long as the final manager approves it before the payroll payment day.</div>
+                                <div>To ensure your changes are applied to <strong>June 2026</strong> salary, we recommend submitting them by:</div>
+                                <div><strong>For Emiratis:</strong> <span class="deadline">June 25, 11:59 PM</span></div>
+                                <div><strong>For Overseas &amp; Expats:</strong> <span class="deadline">June 26, 11:59 PM</span></div>
                             </div>
                         </div>
                     </div>
@@ -470,12 +470,9 @@
             <div class="form-group"><label>Salary Raise Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="raiseCur">AED</span><input type="number" min="0" step="1" class="form-control" id="raiseAmount" placeholder="0"></div></div>
             <div class="form-group"><label>Salary Raise Reason <span class="req">*</span></label><textarea class="form-control" id="raiseReason" placeholder="Add a note / reason for this raise..."></textarea></div>
         </div>
-        <div class="modal-footer modal-footer-stack">
-            <div class="mf-row">
-                <button type="button" class="btn btn-outline" data-cancel="raise">Cancel</button>
-                <button type="button" class="btn btn-primary" data-confirm="raise" data-when="before"><i class="fas fa-check"></i> Confirm</button>
-            </div>
-            <a href="#" class="demo-link" id="raiseDemoLink" data-confirm="raise" data-when="after">click here to demo submitting on or after June 27</a>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" data-cancel="raise">Cancel</button>
+            <button type="button" class="btn btn-primary" data-confirm="raise"><i class="fas fa-check"></i> Confirm</button>
         </div>
     </div></div>
 
@@ -495,12 +492,9 @@
             </div>
             <div class="form-group"><label>Bonus Reason <span class="req">*</span></label><textarea class="form-control" id="addReason" placeholder="Add a note / reason for this bonus..."></textarea></div>
         </div>
-        <div class="modal-footer modal-footer-stack">
-            <div class="mf-row">
-                <button type="button" class="btn btn-outline" data-cancel="bonus">Cancel</button>
-                <button type="button" class="btn btn-primary" data-confirm="bonus" data-when="before"><i class="fas fa-check"></i> Confirm</button>
-            </div>
-            <a href="#" class="demo-link" id="addDemoLink" data-confirm="bonus" data-when="after">click here to demo submitting on or after June 27</a>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" data-cancel="bonus">Cancel</button>
+            <button type="button" class="btn btn-primary" data-confirm="bonus"><i class="fas fa-check"></i> Confirm</button>
         </div>
     </div></div>
 
@@ -520,12 +514,9 @@
             </div>
             <div class="form-group"><label>Deduction Reason <span class="req">*</span></label><textarea class="form-control" id="dedReason" placeholder="Add a note / reason for this deduction..."></textarea></div>
         </div>
-        <div class="modal-footer modal-footer-stack">
-            <div class="mf-row">
-                <button type="button" class="btn btn-outline" data-cancel="deduction">Cancel</button>
-                <button type="button" class="btn btn-primary" data-confirm="deduction" data-when="before"><i class="fas fa-check"></i> Confirm</button>
-            </div>
-            <a href="#" class="demo-link" id="dedDemoLink" data-confirm="deduction" data-when="after">click here to demo submitting on or after June 27</a>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" data-cancel="deduction">Cancel</button>
+            <button type="button" class="btn btn-primary" data-confirm="deduction"><i class="fas fa-check"></i> Confirm</button>
         </div>
     </div></div>
 
@@ -1026,7 +1017,6 @@
             document.getElementById('raiseLastAmt').textContent=fmt(r.lastRaise.amt,r.cur);
             document.getElementById('raiseAmount').value='';
             document.getElementById('raiseReason').value='';
-            document.getElementById('raiseDemoLink').textContent='click here to demo submitting on or after '+(r.empType==='Emirati'?'June 26':'June 27');
             document.getElementById('raiseErr').classList.remove('show');
             openModal('raiseModal');
         }
@@ -1046,7 +1036,6 @@
             document.getElementById('addAmount').value='';
             document.getElementById('addPurpose').value='';
             document.getElementById('addReason').value='';
-            document.getElementById('addDemoLink').textContent='click here to demo submitting on or after '+(r.empType==='Emirati'?'June 26':'June 27');
             document.getElementById('addErr').classList.remove('show');
             openModal('additionModal');
         }
@@ -1063,7 +1052,6 @@
             document.getElementById('dedPurpose').value='';
             document.getElementById('dedReason').value='';
             document.getElementById('dedMaxHint').textContent='Maximum deductible: '+fmt(Math.max(0,dedMax(r)),r.cur)+' \u2014 net salary cannot be negative.';
-            document.getElementById('dedDemoLink').textContent='click here to demo submitting on or after '+(r.empType==='Emirati'?'June 26':'June 27');
             document.getElementById('dedErr').classList.remove('show');
             openModal('deductionModal');
         }
@@ -1080,23 +1068,18 @@
             function remove(){ clearTimeout(t); if(el.parentNode){ el.style.opacity='0'; el.style.transition='opacity 0.2s'; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },200);} }
             el.querySelector('.tc').addEventListener('click', remove);
         }
-        function approvalMsg(action, amtTxt, nm, when){
+        function approvalMsg(action, amtTxt, nm){
             // action: 'raise' | 'bonus' | 'deduction'
-            var verb = action==='deduction' ? 'deducted from' : (action==='bonus' ? 'added to' : 'applied to');
             var lead;
             if(action==='raise') lead='Salary raise of <b>'+amtTxt+'</b>';
             else if(action==='bonus') lead='Bonus of <b>'+amtTxt+'</b>';
             else lead='Deduction of <b>'+amtTxt+'</b>';
-            var head = lead+' is added for <b>'+nm+'</b> and sent to the final manager for approval. ';
-            if(when==='after'){
-                return head+'It will be '+verb+' <b>July</b> salary, therefore it will be recorded as of <b>July 1st</b>.';
-            }
-            return head+'It will be '+verb+' <b>June</b> salary.';
+            return lead+' is added for <b>'+nm+'</b> and sent to the final manager for approval.';
         }
 
         document.addEventListener('click', function(e){
             var conf=e.target.closest('[data-confirm]');
-            if(conf){ e.preventDefault(); handleConfirm(conf.getAttribute('data-confirm'), conf.getAttribute('data-when')); return; }
+            if(conf){ e.preventDefault(); handleConfirm(conf.getAttribute('data-confirm')); return; }
             var canc=e.target.closest('[data-cancel]');
             if(canc){ e.preventDefault(); handleCancel(canc.getAttribute('data-cancel')); return; }
         });
@@ -1152,7 +1135,7 @@
             toastHtml('success', ps.msg);
         }
 
-        function handleConfirm(type, when){
+        function handleConfirm(type){
             if(!modalRow) return;
             var cur=modalRow.cur, nm=esc(modalRow.name);
             var amount, msg, srcModal;
@@ -1160,14 +1143,14 @@
                 amount=parseFloat(document.getElementById('raiseAmount').value)||0;
                 if(amount<=0){ showErr('raiseErr','Please enter a salary raise amount greater than 0.'); return; }
                 if(!document.getElementById('raiseReason').value.trim()){ showErr('raiseErr','Please enter a reason for this salary raise.'); return; }
-                msg=approvalMsg('raise', fmt(amount,cur), nm, when); srcModal='raiseModal';
+                msg=approvalMsg('raise', fmt(amount,cur), nm); srcModal='raiseModal';
             } else if(type==='bonus'){
                 amount=parseFloat(document.getElementById('addAmount').value)||0;
                 var purpose=document.getElementById('addPurpose').value;
                 if(amount<=0){ showErr('addErr','Please enter a bonus amount greater than 0.'); return; }
                 if(!purpose){ showErr('addErr','Please select a bonus purpose.'); return; }
                 if(!document.getElementById('addReason').value.trim()){ showErr('addErr','Please enter a reason for this bonus.'); return; }
-                msg=approvalMsg('bonus', fmt(amount,cur)+' ('+esc(purpose)+')', nm, when); srcModal='additionModal';
+                msg=approvalMsg('bonus', fmt(amount,cur)+' ('+esc(purpose)+')', nm); srcModal='additionModal';
             } else if(type==='deduction'){
                 amount=parseFloat(document.getElementById('dedAmount').value)||0;
                 var purposeD=document.getElementById('dedPurpose').value;
@@ -1176,9 +1159,9 @@
                 if(amount>mx){ showErr('dedErr','Deduction cannot exceed '+fmt(mx,cur)+'. Net salary cannot be negative.'); return; }
                 if(!purposeD){ showErr('dedErr','Please select a deduction purpose.'); return; }
                 if(!document.getElementById('dedReason').value.trim()){ showErr('dedErr','Please enter a reason for this deduction.'); return; }
-                msg=approvalMsg('deduction', fmt(amount,cur)+' ('+esc(purposeD)+')', nm, when); srcModal='deductionModal';
+                msg=approvalMsg('deduction', fmt(amount,cur)+' ('+esc(purposeD)+')', nm); srcModal='deductionModal';
             }
-            pendingSubmit={ type:type, when:when, amount:amount, msg:msg, srcModal:srcModal };
+            pendingSubmit={ type:type, amount:amount, msg:msg, srcModal:srcModal };
             var dup=findDuplicate(modalRow, type, amount);
             if(dup){
                 var copy=dupCopy(type, dup);
