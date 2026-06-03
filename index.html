@@ -359,8 +359,8 @@
                             <span class="banner-title">Your Team's Roster for <span class="mo">June 2026</span> Payroll</span>
                             <div class="banner-note">
                                 <div>Update your team's salaries from this page.</div>
-                                <div>You can request a change at any time. It will be applied to <strong>June 2026</strong> salary as long as the final manager approves it before the payroll payment day.</div>
-                                <div>To ensure your changes are applied to <strong>June 2026</strong> salary, we recommend submitting them by:</div>
+                                <div>You can request a change at any time. It will be applied to the <strong>June 2026</strong> salary as long as the final manager approves it before the payroll payment day.</div>
+                                <div>To ensure your changes are applied to the <strong>June 2026</strong> salary, we recommend submitting them by:</div>
                                 <div><strong>For Emiratis:</strong> <span class="deadline">June 25, 11:59 PM</span></div>
                                 <div><strong>For Overseas &amp; Expats:</strong> <span class="deadline">June 26, 11:59 PM</span></div>
                             </div>
@@ -678,6 +678,7 @@
 
             // ----- May 2026 net salary (previous month) -----
             r.prevNet = r.salary + sumItems(r.additions) - Math.round(r.salary*0.02) - (r.loan||0);
+            r.noPrevSalary = false; // set after all employees are built (fixed quota per type)
 
             // ----- last* derived from most recent matching history rows (fallbacks if none) -----
             function latestOf(t){ var rows=changes.filter(function(x){ return x.type===t; }).slice().sort(function(a,b){ return b.date<a.date?-1:1; }); return rows[0]; }
@@ -686,6 +687,14 @@
             r.lastBonus = lb ? {date:lb.date, amt:lb.amt} : {date:daysAgo(95+i), amt:roundTo(r.salary*0.06,step)};
             r.lastDeduction = ld ? {date:ld.date, amt:ld.amt} : {date:daysAgo(70+i), amt:roundTo(r.salary*0.03,step)};
         });
+
+        // Flag a fixed quota of employees as having no previous-month salary record
+        (function(){
+            var quota={ Emirati:2, Overseas:3, Expat:2 };
+            ALL.forEach(function(r){
+                if(quota[r.empType]>0){ r.noPrevSalary=true; quota[r.empType]--; }
+            });
+        })();
 
         /* ---------------- Columns ---------------- */
         var COLUMNS = [
@@ -1227,7 +1236,7 @@
         }
         function openHistory(row){
             document.getElementById('histTitle').textContent=row.name+"'s Payroll History";
-            document.getElementById('histPrevNet').textContent=fmt(row.prevNet, row.cur);
+            document.getElementById('histPrevNet').textContent = row.noPrevSalary ? 'No salary record was found' : fmt(row.prevNet, row.cur);
 
             var cb=document.getElementById('histChangesBody');
             var changes=sortByStatusThenDate(row.changeHistory||[]);
