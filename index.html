@@ -290,6 +290,11 @@
     .cols-bulk-btn { background: none; border: none; font-family: inherit; font-size: 0.7rem; font-weight: 700; text-transform: none; letter-spacing: 0; color: var(--primary-color); cursor: pointer; padding: 0.1rem 0.25rem; border-radius: 0.3rem; }
     .cols-bulk-btn:hover:not(:disabled) { background: var(--bg-tertiary); }
     .cols-bulk-btn:disabled { color: #cbd5e1; cursor: default; }
+    .modal-footer-fm { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.6rem; }
+    .modal-footer-fm .fm-demo-actions { display: inline-flex; gap: 0.5rem; margin-left: auto; }
+    .fm-demo-toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.74rem; color: var(--text-muted); cursor: pointer; user-select: none; }
+    .fm-demo-toggle input { accent-color: var(--primary-color); cursor: pointer; }
+    .fm-demo-toggle i { color: var(--primary-color); font-size: 0.72rem; }
     </style>
 </head>
 <body>
@@ -470,9 +475,14 @@
             <div class="form-group"><label>Salary Raise Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="raiseCur">AED</span><input type="number" min="0" step="1" class="form-control" id="raiseAmount" placeholder="0"></div></div>
             <div class="form-group"><label>Salary Raise Reason <span class="req">*</span></label><textarea class="form-control" id="raiseReason" placeholder="Add a note / reason for this raise..."></textarea></div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" data-cancel="raise">Cancel</button>
-            <button type="button" class="btn btn-primary" data-confirm="raise"><i class="fas fa-check"></i> Confirm</button>
+        <div class="modal-footer modal-footer-fm">
+            <label class="fm-demo-toggle" title="Final managers (Mario / Adeeb / Jad) auto-approve their own requests">
+                <input type="checkbox" id="raiseAsFM"> <i class="fas fa-flask"></i> Demo: submit as a final manager
+            </label>
+            <span class="fm-demo-actions">
+                <button type="button" class="btn btn-outline" data-cancel="raise">Cancel</button>
+                <button type="button" class="btn btn-primary" data-confirm="raise"><i class="fas fa-check"></i> Confirm</button>
+            </span>
         </div>
     </div></div>
 
@@ -492,9 +502,14 @@
             </div>
             <div class="form-group"><label>Bonus Reason <span class="req">*</span></label><textarea class="form-control" id="addReason" placeholder="Add a note / reason for this bonus..."></textarea></div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" data-cancel="bonus">Cancel</button>
-            <button type="button" class="btn btn-primary" data-confirm="bonus"><i class="fas fa-check"></i> Confirm</button>
+        <div class="modal-footer modal-footer-fm">
+            <label class="fm-demo-toggle" title="Final managers (Mario / Adeeb / Jad) auto-approve their own requests">
+                <input type="checkbox" id="addAsFM"> <i class="fas fa-flask"></i> Demo: submit as a final manager
+            </label>
+            <span class="fm-demo-actions">
+                <button type="button" class="btn btn-outline" data-cancel="bonus">Cancel</button>
+                <button type="button" class="btn btn-primary" data-confirm="bonus"><i class="fas fa-check"></i> Confirm</button>
+            </span>
         </div>
     </div></div>
 
@@ -514,9 +529,14 @@
             </div>
             <div class="form-group"><label>Deduction Reason <span class="req">*</span></label><textarea class="form-control" id="dedReason" placeholder="Add a note / reason for this deduction..."></textarea></div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-outline" data-cancel="deduction">Cancel</button>
-            <button type="button" class="btn btn-primary" data-confirm="deduction"><i class="fas fa-check"></i> Confirm</button>
+        <div class="modal-footer modal-footer-fm">
+            <label class="fm-demo-toggle" title="Final managers (Mario / Adeeb / Jad) auto-approve their own requests">
+                <input type="checkbox" id="dedAsFM"> <i class="fas fa-flask"></i> Demo: submit as a final manager
+            </label>
+            <span class="fm-demo-actions">
+                <button type="button" class="btn btn-outline" data-cancel="deduction">Cancel</button>
+                <button type="button" class="btn btn-primary" data-confirm="deduction"><i class="fas fa-check"></i> Confirm</button>
+            </span>
         </div>
     </div></div>
 
@@ -1017,6 +1037,7 @@
             document.getElementById('raiseLastAmt').textContent=fmt(r.lastRaise.amt,r.cur);
             document.getElementById('raiseAmount').value='';
             document.getElementById('raiseReason').value='';
+            document.getElementById('raiseAsFM').checked=false;
             document.getElementById('raiseErr').classList.remove('show');
             openModal('raiseModal');
         }
@@ -1036,6 +1057,7 @@
             document.getElementById('addAmount').value='';
             document.getElementById('addPurpose').value='';
             document.getElementById('addReason').value='';
+            document.getElementById('addAsFM').checked=false;
             document.getElementById('addErr').classList.remove('show');
             openModal('additionModal');
         }
@@ -1052,6 +1074,7 @@
             document.getElementById('dedPurpose').value='';
             document.getElementById('dedReason').value='';
             document.getElementById('dedMaxHint').textContent='Maximum deductible: '+fmt(Math.max(0,dedMax(r)),r.cur)+' \u2014 net salary cannot be negative.';
+            document.getElementById('dedAsFM').checked=false;
             document.getElementById('dedErr').classList.remove('show');
             openModal('deductionModal');
         }
@@ -1068,12 +1091,16 @@
             function remove(){ clearTimeout(t); if(el.parentNode){ el.style.opacity='0'; el.style.transition='opacity 0.2s'; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },200);} }
             el.querySelector('.tc').addEventListener('click', remove);
         }
-        function approvalMsg(action, amtTxt, nm){
+        function approvalMsg(action, amtTxt, nm, asFinalManager){
             // action: 'raise' | 'bonus' | 'deduction'
             var lead;
             if(action==='raise') lead='Salary raise of <b>'+amtTxt+'</b>';
             else if(action==='bonus') lead='Bonus of <b>'+amtTxt+'</b>';
             else lead='Deduction of <b>'+amtTxt+'</b>';
+            if(asFinalManager){
+                // Final managers (Mario / Adeeb / Jad) auto-approve their own requests
+                return lead+' is added for <b>'+nm+'</b> and will be applied to their next salary.';
+            }
             return lead+' is added for <b>'+nm+'</b> and sent to the final manager for approval.';
         }
 
@@ -1135,22 +1162,28 @@
             toastHtml('success', ps.msg);
         }
 
+        function demoFinalMgr(type){
+            var id={ raise:'raiseAsFM', bonus:'addAsFM', deduction:'dedAsFM' }[type];
+            var el=document.getElementById(id);
+            return !!(el && el.checked);
+        }
         function handleConfirm(type){
             if(!modalRow) return;
             var cur=modalRow.cur, nm=esc(modalRow.name);
             var amount, msg, srcModal;
+            var asFM=demoFinalMgr(type);
             if(type==='raise'){
                 amount=parseFloat(document.getElementById('raiseAmount').value)||0;
                 if(amount<=0){ showErr('raiseErr','Please enter a salary raise amount greater than 0.'); return; }
                 if(!document.getElementById('raiseReason').value.trim()){ showErr('raiseErr','Please enter a reason for this salary raise.'); return; }
-                msg=approvalMsg('raise', fmt(amount,cur), nm); srcModal='raiseModal';
+                msg=approvalMsg('raise', fmt(amount,cur), nm, asFM); srcModal='raiseModal';
             } else if(type==='bonus'){
                 amount=parseFloat(document.getElementById('addAmount').value)||0;
                 var purpose=document.getElementById('addPurpose').value;
                 if(amount<=0){ showErr('addErr','Please enter a bonus amount greater than 0.'); return; }
                 if(!purpose){ showErr('addErr','Please select a bonus purpose.'); return; }
                 if(!document.getElementById('addReason').value.trim()){ showErr('addErr','Please enter a reason for this bonus.'); return; }
-                msg=approvalMsg('bonus', fmt(amount,cur)+' ('+esc(purpose)+')', nm); srcModal='additionModal';
+                msg=approvalMsg('bonus', fmt(amount,cur)+' ('+esc(purpose)+')', nm, asFM); srcModal='additionModal';
             } else if(type==='deduction'){
                 amount=parseFloat(document.getElementById('dedAmount').value)||0;
                 var purposeD=document.getElementById('dedPurpose').value;
@@ -1159,7 +1192,7 @@
                 if(amount>mx){ showErr('dedErr','Deduction cannot exceed '+fmt(mx,cur)+'. Net salary cannot be negative.'); return; }
                 if(!purposeD){ showErr('dedErr','Please select a deduction purpose.'); return; }
                 if(!document.getElementById('dedReason').value.trim()){ showErr('dedErr','Please enter a reason for this deduction.'); return; }
-                msg=approvalMsg('deduction', fmt(amount,cur)+' ('+esc(purposeD)+')', nm); srcModal='deductionModal';
+                msg=approvalMsg('deduction', fmt(amount,cur)+' ('+esc(purposeD)+')', nm, asFM); srcModal='deductionModal';
             }
             pendingSubmit={ type:type, amount:amount, msg:msg, srcModal:srcModal };
             var dup=findDuplicate(modalRow, type, amount);
