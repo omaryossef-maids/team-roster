@@ -295,6 +295,12 @@
     .fm-demo-toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.74rem; color: var(--text-muted); cursor: pointer; user-select: none; }
     .fm-demo-toggle input { accent-color: var(--primary-color); cursor: pointer; }
     .fm-demo-toggle i { color: var(--primary-color); font-size: 0.72rem; }
+    .cur-note { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 0.78rem; line-height: 1.4; border-radius: 0.5rem; padding: 0.55rem 0.7rem; margin-bottom: 0.6rem; }
+    .conv-toggle { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; user-select: none; margin: -0.1rem 0 0.7rem; }
+    .conv-toggle input { accent-color: var(--primary-color); cursor: pointer; }
+    .conv-toggle i { color: var(--primary-color); font-size: 0.74rem; }
+    .round-note { color: var(--text-muted); font-size: 0.7rem; margin-top: 0.25rem; }
+    .form-control[readonly] { background: var(--bg-secondary); color: var(--text-secondary); cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -472,7 +478,10 @@
                 <div class="ro"><span class="ro-l">Last Salary Raise Date</span><span class="ro-v" id="raiseLastDate">-</span></div>
                 <div class="ro"><span class="ro-l">Last Salary Raise Amount</span><span class="ro-v" id="raiseLastAmt">-</span></div>
             </div>
-            <div class="form-group"><label>Salary Raise Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="raiseCur">AED</span><input type="number" min="0" step="1" class="form-control" id="raiseAmount" placeholder="0"></div></div>
+            <div class="cur-note" id="raiseCurNote" style="display:none;"></div>
+            <label class="conv-toggle" id="raiseConvWrap" style="display:none;"><input type="checkbox" id="raiseConv"> <i class="fas fa-right-left"></i> My amount is in USD — convert to AED automatically</label>
+            <div class="form-group" id="raiseUsdGroup" style="display:none;"><label>Salary Raise Amount in USD <span class="req">*</span></label><div class="input-prefixed"><span class="cur">USD</span><input type="number" min="0" step="1" class="form-control" id="raiseUsd" placeholder="0"></div></div>
+            <div class="form-group"><label id="raiseAmountLabel">Salary Raise Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="raiseCur">AED</span><input type="number" min="0" step="1" class="form-control" id="raiseAmount" placeholder="0"></div><div class="field-hint round-note" id="raiseRoundNote" style="display:none;">Amounts with fractions are rounded up to the nearest whole number.</div></div>
             <div class="form-group"><label>Salary Raise Reason <span class="req">*</span></label><textarea class="form-control" id="raiseReason" placeholder="Add a note / reason for this raise..."></textarea></div>
         </div>
         <div class="modal-footer modal-footer-fm">
@@ -496,7 +505,10 @@
                 <div class="ro"><span class="ro-l">Last Bonus Amount</span><span class="ro-v" id="addLastAmt">-</span></div>
                 <div class="ro"><span class="ro-l">Last Bonus Date</span><span class="ro-v" id="addLastDate">-</span></div>
             </div>
-            <div class="form-group"><label>Bonus Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="addCur">AED</span><input type="number" min="0" step="1" class="form-control" id="addAmount" placeholder="0"></div></div>
+            <div class="cur-note" id="addCurNote" style="display:none;"></div>
+            <label class="conv-toggle" id="addConvWrap" style="display:none;"><input type="checkbox" id="addConv"> <i class="fas fa-right-left"></i> My amount is in USD — convert to AED automatically</label>
+            <div class="form-group" id="addUsdGroup" style="display:none;"><label>Bonus Amount in USD <span class="req">*</span></label><div class="input-prefixed"><span class="cur">USD</span><input type="number" min="0" step="1" class="form-control" id="addUsd" placeholder="0"></div></div>
+            <div class="form-group"><label id="addAmountLabel">Bonus Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="addCur">AED</span><input type="number" min="0" step="1" class="form-control" id="addAmount" placeholder="0"></div><div class="field-hint round-note" id="addRoundNote" style="display:none;">Amounts with fractions are rounded up to the nearest whole number.</div></div>
             <div class="form-group"><label>Bonus Purpose <span class="req">*</span></label>
                 <select class="form-control" id="addPurpose"><option value="">-- Select purpose --</option><option>Bonus</option><option>Equipment</option><option>Salary Dispute</option><option>Transportation Fare Reimbursement</option><option>Retail Incentive</option><option>Low Exchange Rate Compensation</option><option>Prorated Salary</option><option>Cash Advance</option><option>Final Settlement</option></select>
             </div>
@@ -523,7 +535,10 @@
                 <div class="ro"><span class="ro-l">Last Deduction Amount</span><span class="ro-v" id="dedLastAmt">-</span></div>
                 <div class="ro"><span class="ro-l">Last Deduction Date</span><span class="ro-v" id="dedLastDate">-</span></div>
             </div>
-            <div class="form-group"><label>Deduction Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="dedCur">AED</span><input type="number" min="0" step="1" class="form-control" id="dedAmount" placeholder="0"></div><div class="field-hint" id="dedMaxHint"></div></div>
+            <div class="cur-note" id="dedCurNote" style="display:none;"></div>
+            <label class="conv-toggle" id="dedConvWrap" style="display:none;"><input type="checkbox" id="dedConv"> <i class="fas fa-right-left"></i> My amount is in USD — convert to AED automatically</label>
+            <div class="form-group" id="dedUsdGroup" style="display:none;"><label>Deduction Amount in USD <span class="req">*</span></label><div class="input-prefixed"><span class="cur">USD</span><input type="number" min="0" step="1" class="form-control" id="dedUsd" placeholder="0"></div></div>
+            <div class="form-group"><label id="dedAmountLabel">Deduction Amount <span class="req">*</span></label><div class="input-prefixed"><span class="cur" id="dedCur">AED</span><input type="number" min="0" step="1" class="form-control" id="dedAmount" placeholder="0"></div><div class="field-hint round-note" id="dedRoundNote" style="display:none;">Amounts with fractions are rounded up to the nearest whole number.</div></div>
             <div class="form-group"><label>Deduction Purpose <span class="req">*</span></label>
                 <select class="form-control" id="dedPurpose"><option value="">-- Select purpose --</option><option>5% Pension Box Deduction</option><option>Absence / non-working days</option><option>Salary Dispute</option><option>Pension Compensation</option><option>Unpaid Vacation</option></select>
             </div>
@@ -604,6 +619,16 @@
         ];
         function decorate(arr,type,cur){ arr.forEach(function(r){ r.empType=type; r.cur=cur; r.rosterMgr='Omar Abdelhamid Yossef'; }); }
         decorate(EMIRATIS,'Emirati','AED'); decorate(OVERSEAS,'Overseas','USD'); decorate(EXPATS,'Expat','AED');
+        // Some overseas staff are paid in other currencies (demonstrates the action-modal currency note / conversion)
+        (function(){
+            var byName={}; OVERSEAS.forEach(function(r){ byName[r.name]=r; });
+            // AED-paid overseas (enables the USD->AED conversion checkbox)
+            if(byName['Cinda Rose Sekareah']) byName['Cinda Rose Sekareah'].cur='AED';
+            if(byName['Amara Chidinma Okafor']) byName['Amara Chidinma Okafor'].cur='AED';
+            // Other-currency overseas (shows the "convert before submitting" note)
+            if(byName['Ravi Kumar Sharma']) byName['Ravi Kumar Sharma'].cur='INR';
+            if(byName['Miguel Angel Torres']) byName['Miguel Angel Torres'].cur='EUR';
+        })();
         var ALL = EMIRATIS.concat(OVERSEAS, EXPATS);
         var TABS = { all:ALL, emiratis:EMIRATIS, overseas:OVERSEAS, expats:EXPATS };
         var ROWS_BY_ID={}, _seq=0;
@@ -730,7 +755,7 @@
         function esc(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
         function fmt(n,cur){ return cur+' '+Number(n).toLocaleString('en-US'); }
         function sumItems(a){ return (a||[]).reduce(function(t,i){ return t+Number(i.amt||0); },0); }
-        function net(r){ return r.salary+sumItems(r.additions)-sumItems(r.deductions)-(r.loan||0); }
+        function net(r){ return r.salary+sumItems(r.additions)-sumItems(r.deductions)+sumItems(r.newLoans)-(r.loan||0); }
         function toTransfer(r){ return r.onhold?0:net(r)+(r.prevUnpaid||0); }
         var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         function fmtDate(iso){ var p=iso.split('-'); return parseInt(p[2],10)+' '+MONTHS[parseInt(p[1],10)-1]+' '+p[0]; }
@@ -1036,6 +1061,83 @@
         function fmtLong(iso){ var pt=iso.split('-'); var d=pt[2]; if(d.length<2) d='0'+d; return d+' '+FULLMON[parseInt(pt[1],10)-1]+', '+pt[0]; }
         var modalRow=null;
 
+        var USD_TO_AED=3.67;
+        function setRoundNote(prefix, show){ var el=document.getElementById(prefix+'RoundNote'); if(el) el.style.display = show ? '' : 'none'; }
+        function onAmountChange(prefix){
+            var el=document.getElementById(prefix+'Amount');
+            if(!el || el.readOnly) return; // conversion mode controls its own value/note
+            var v=parseFloat(el.value);
+            if(!isNaN(v) && v % 1 !== 0){ el.value=Math.ceil(v); setRoundNote(prefix, true); }
+            else { setRoundNote(prefix, false); }
+            if(prefix==='raise') updateRaiseNew();
+        }
+        // Configure the currency note + USD->AED conversion UI for a given modal.
+        // prefix: 'raise' | 'add' | 'ded'.  typeWord: 'salary raise' | 'bonus' | 'deduction'
+        function setupCurrencyUI(prefix, r, typeWord){
+            var note=document.getElementById(prefix+'CurNote');
+            var convWrap=document.getElementById(prefix+'ConvWrap');
+            var conv=document.getElementById(prefix+'Conv');
+            var usdGroup=document.getElementById(prefix+'UsdGroup');
+            var usd=document.getElementById(prefix+'Usd');
+            var amount=document.getElementById(prefix+'Amount');
+            var amountLabel=document.getElementById(prefix+'AmountLabel');
+            var baseLabel=amountLabel.getAttribute('data-base') || amountLabel.textContent;
+            amountLabel.setAttribute('data-base', baseLabel);
+            // reset
+            conv.checked=false; usd.value=''; usdGroup.style.display='none';
+            amount.readOnly=false; amount.classList.remove('readonly');
+            amountLabel.innerHTML=baseLabel+' <span class="req">*</span>';
+            note.style.display='none'; convWrap.style.display='none';
+            setRoundNote(prefix, false);
+
+            // Only overseas employees whose currency is not USD get a note
+            if(r.empType==='Overseas' && r.cur!=='USD'){
+                if(r.cur==='AED'){
+                    note.innerHTML=esc(r.name)+'\'s salary is in <b>AED</b>. If your '+typeWord+' amount is in USD, check the box below to automatically convert it to AED.';
+                    note.style.display='block';
+                    convWrap.style.display='flex';
+                } else {
+                    note.innerHTML=esc(r.name)+'\'s salary is in <b>'+esc(r.cur)+'</b>. If your '+typeWord+' amount is in a different currency, please convert it to '+esc(r.cur)+' before submitting.';
+                    note.style.display='block';
+                }
+            }
+        }
+        // Wire the USD->AED conversion behaviour for a modal (called once at init)
+        function wireConversion(prefix, typeWord){
+            var conv=document.getElementById(prefix+'Conv');
+            var usdGroup=document.getElementById(prefix+'UsdGroup');
+            var usd=document.getElementById(prefix+'Usd');
+            var amount=document.getElementById(prefix+'Amount');
+            var amountLabel=document.getElementById(prefix+'AmountLabel');
+            function recalc(){
+                var u=parseFloat(usd.value)||0;
+                amount.value = u>0 ? Math.ceil(u*USD_TO_AED) : '';
+                if(prefix==='raise') updateRaiseNew();
+            }
+            conv.addEventListener('change', function(){
+                var base=amountLabel.getAttribute('data-base');
+                if(conv.checked){
+                    usdGroup.style.display='';
+                    amount.readOnly=true; amount.classList.add('readonly');
+                    amountLabel.innerHTML=base+' — Converted to AED';
+                    recalc();
+                    setRoundNote(prefix, true);   // exception: stays visible under the AED field
+                } else {
+                    usdGroup.style.display='none';
+                    amount.readOnly=false; amount.classList.remove('readonly');
+                    amountLabel.innerHTML=base+' <span class="req">*</span>';
+                    usd.value='';
+                    setRoundNote(prefix, false);
+                }
+            });
+            usd.addEventListener('input', recalc);
+        }
+        function updateRaiseNew(){
+            if(!modalRow) return;
+            var v=Math.ceil(parseFloat(document.getElementById('raiseAmount').value)||0);
+            document.getElementById('raiseNew').textContent=fmt(modalRow.salary+v, modalRow.cur);
+        }
+
         function openRaise(r){
             modalRow=r;
             document.getElementById('raiseName').textContent=r.name;
@@ -1046,15 +1148,12 @@
             document.getElementById('raiseLastAmt').textContent=fmt(r.lastRaise.amt,r.cur);
             document.getElementById('raiseAmount').value='';
             document.getElementById('raiseReason').value='';
+            setupCurrencyUI('raise', r, 'salary raise');
             document.getElementById('raiseAsFM').checked=false;
             document.getElementById('raiseErr').classList.remove('show');
             openModal('raiseModal');
         }
-        document.getElementById('raiseAmount').addEventListener('input', function(){
-            if(!modalRow) return;
-            var v=parseFloat(this.value)||0;
-            document.getElementById('raiseNew').textContent=fmt(modalRow.salary+v, modalRow.cur);
-        });
+        document.getElementById('raiseAmount').addEventListener('input', updateRaiseNew);
 
         function openBonus(r){
             modalRow=r;
@@ -1066,12 +1165,13 @@
             document.getElementById('addAmount').value='';
             document.getElementById('addPurpose').value='';
             document.getElementById('addReason').value='';
+            setupCurrencyUI('add', r, 'bonus');
             document.getElementById('addAsFM').checked=false;
             document.getElementById('addErr').classList.remove('show');
             openModal('additionModal');
         }
 
-        function dedMax(r){ return r.salary + sumItems(r.additions) - (r.loan||0); }
+        function dedMax(r){ return net(r); } // max new deduction so Net Salary (Salary + Additions − Deductions + New Loans − Loan Repayment) stays ≥ 0
         function openDed(r){
             modalRow=r;
             document.getElementById('dedName').textContent=r.name;
@@ -1082,7 +1182,7 @@
             document.getElementById('dedAmount').value='';
             document.getElementById('dedPurpose').value='';
             document.getElementById('dedReason').value='';
-            document.getElementById('dedMaxHint').textContent='Maximum deductible: '+fmt(Math.max(0,dedMax(r)),r.cur)+' \u2014 net salary cannot be negative.';
+            setupCurrencyUI('ded', r, 'deduction');
             document.getElementById('dedAsFM').checked=false;
             document.getElementById('dedErr').classList.remove('show');
             openModal('deductionModal');
@@ -1182,19 +1282,19 @@
             var amount, msg, srcModal;
             var asFM=demoFinalMgr(type);
             if(type==='raise'){
-                amount=parseFloat(document.getElementById('raiseAmount').value)||0;
+                amount=Math.ceil(parseFloat(document.getElementById('raiseAmount').value)||0);
                 if(amount<=0){ showErr('raiseErr','Please enter a salary raise amount greater than 0.'); return; }
                 if(!document.getElementById('raiseReason').value.trim()){ showErr('raiseErr','Please enter a reason for this salary raise.'); return; }
                 msg=approvalMsg('raise', fmt(amount,cur), nm, asFM); srcModal='raiseModal';
             } else if(type==='bonus'){
-                amount=parseFloat(document.getElementById('addAmount').value)||0;
+                amount=Math.ceil(parseFloat(document.getElementById('addAmount').value)||0);
                 var purpose=document.getElementById('addPurpose').value;
                 if(amount<=0){ showErr('addErr','Please enter a bonus amount greater than 0.'); return; }
                 if(!purpose){ showErr('addErr','Please select a bonus purpose.'); return; }
                 if(!document.getElementById('addReason').value.trim()){ showErr('addErr','Please enter a reason for this bonus.'); return; }
                 msg=approvalMsg('bonus', fmt(amount,cur)+' ('+esc(purpose)+')', nm, asFM); srcModal='additionModal';
             } else if(type==='deduction'){
-                amount=parseFloat(document.getElementById('dedAmount').value)||0;
+                amount=Math.ceil(parseFloat(document.getElementById('dedAmount').value)||0);
                 var purposeD=document.getElementById('dedPurpose').value;
                 var mx=Math.max(0,dedMax(modalRow));
                 if(amount<=0){ showErr('dedErr','Please enter a deduction amount greater than 0.'); return; }
@@ -1292,6 +1392,13 @@
         });
 
         /* ---------------- Init ---------------- */
+        document.getElementById('raiseAmountLabel').setAttribute('data-base','Salary Raise Amount');
+        document.getElementById('addAmountLabel').setAttribute('data-base','Bonus Amount');
+        document.getElementById('dedAmountLabel').setAttribute('data-base','Deduction Amount');
+        wireConversion('raise','salary raise'); wireConversion('add','bonus'); wireConversion('ded','deduction');
+        document.getElementById('raiseAmount').addEventListener('change', function(){ onAmountChange('raise'); });
+        document.getElementById('addAmount').addEventListener('change', function(){ onAmountChange('add'); });
+        document.getElementById('dedAmount').addEventListener('change', function(){ onAmountChange('ded'); });
         buildAddlFilters(); buildColOptions(); refreshTabCounts(); refreshSelects(); renderTable();
         requestAnimationFrame(layout);
     })();
